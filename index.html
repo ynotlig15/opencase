@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Champion - Case Opening</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c0f;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 10% 20%, rgba(0, 198, 224, 0.05) 0%, transparent 30%),
+                              radial-gradient(circle at 90% 80%, rgba(111, 34, 199, 0.05) 0%, transparent 30%);
+        }
+
+        /* Header */
+        .tg-header__area {
+            background: rgba(10, 12, 15, 0.95);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .container-custom {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .tgmenu__wrap {
+            padding: 10px 0;
+        }
+
+        .tgmenu__nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo img {
+            height: 42px;
+            width: auto;
+        }
+
+        .navigation {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .navigation li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 12px;
+            transition: all 0.3s ease;
+        }
+
+        .navigation li a:hover {
+            color: #ffd700;
+        }
+
+        .menu-highlight {
+            color: #ffd700 !important;
+            position: relative;
+        }
+
+        .menu-highlight i {
+            margin-right: 5px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 22px;
+            background: #ffbe18;
+            color: #0f161b !important;
+            font-weight: 800;
+            text-transform: uppercase;
+            transform: skewX(-12deg);
+            border-radius: 2px;
+            text-decoration: none;
+        }
+
+        .btn-download span {
+            transform: skewX(12deg);
+        }
+
+        .user-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px !important;
+        }
+
+        .rank-badge-mini {
+            width: 40px;
+            height: 40px;
+        }
+
+        .user-lines {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .nick-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .nickname {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .login {
+            font-size: 12px;
+            opacity: 0.85;
+        }
+
+        .user-caret {
+            margin-left: 5px;
+        }
+
+        /* Main Content */
+        .top-spacer {
+            height: 100px;
+        }
+
+        .case-opening-area {
+            padding: 40px 0;
+            position: relative;
+        }
+
+        .case-opening-section {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-header {
+            position: relative;
+            margin-bottom: 30px;
+            min-height: 60px;
+        }
+
+        .btn-back-cases {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back-cases:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffd700;
+        }
+
+        .user-balance {
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: rgba(255, 190, 24, 0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #ffbe18;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section__title {
+            text-align: center;
+        }
+
+        .section__title .title {
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .section__title .sub-title {
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .case-opening-main-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .case-opening-image--scaled {
+            transform: scale(1.2);
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Timer Display */
+        .timer-display {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(0, 198, 224, 0.1), rgba(111, 34, 199, 0.1));
+            border-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .timer-display .label {
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .timer-display .time {
+            color: #ffd700;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: monospace;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Roulette */
+        .roulettes-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .roulettes-container[data-amount="5"] {
+            flex-direction: row;
+        }
+
+        .roulettes-container[data-amount="5"] .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .roulette-wrapper {
+            width: 100%;
+        }
+
+        .roulette-container {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(180deg, rgba(8, 12, 20, 0.95), rgba(7, 10, 18, 0.95));
+            border: 1px solid rgba(0, 198, 224, 0.12);
+            border-radius: 10px;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+
+        .roulette-items {
+            display: flex;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: all 8s cubic-bezier(0.15, 0.15, 0, 1);
+        }
+
+        .roulette-item {
+            width: 180px;
+            height: 180px;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55));
+            flex-shrink: 0;
+        }
+
+        .roulette-item.rarity-2 { border: 2px solid #5e98d9; }
+        .roulette-item.rarity-4 { border: 2px solid #8847ff; }
+        .roulette-item.rarity-5 { 
+            border: 2px solid #eb4b4b;
+            animation: legendaryGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes legendaryGlow {
+            from {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            }
+            to {
+                box-shadow: 0 0 40px rgba(235, 75, 75, 0.5);
+            }
+        }
+
+        .roulette-item .item-image {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .roulette-item .item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .roulette-item .item-name {
+            font-size: 12px;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .roulette-item .item-duration {
+            font-size: 11px;
+            color: #adb5bd;
+            margin-top: 5px;
+        }
+
+        .roulette-pointer {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #bba019, #ffd700);
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 0 8px rgba(255, 190, 24, 0.45);
+        }
+
+        .roulette-pointer::before,
+        .roulette-pointer::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            transform: translateX(-50%);
+        }
+
+        .roulette-pointer::before {
+            top: 0;
+            border-top: 15px solid #ffd700;
+        }
+
+        .roulette-pointer::after {
+            bottom: 0;
+            border-bottom: 15px solid #ffd700;
+        }
+
+        /* Open Options */
+        .open-case-options {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn-group {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 5px;
+            display: inline-flex;
+            gap: 10px;
+        }
+
+        .btn-open-option {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 60px;
+        }
+
+        .btn-open-option:hover {
+            background: rgba(255, 190, 24, 0.2);
+        }
+
+        .btn-open-option.active {
+            background: #ffbe18;
+            color: #000;
+        }
+
+        .auto-toggle-container {
+            margin-top: 15px;
+        }
+
+        .auto-toggle {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            gap: 10px;
+        }
+
+        .auto-toggle input {
+            display: none;
+        }
+
+        .auto-toggle-slider {
+            width: 50px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        .auto-toggle-slider:before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            left: 3px;
+            top: 3px;
+            transition: 0.3s;
+        }
+
+        .auto-toggle input:checked + .auto-toggle-slider {
+            background: #ffbe18;
+        }
+
+        .auto-toggle input:checked + .auto-toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .auto-toggle-text {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .auto-toggle input:checked ~ .auto-toggle-text {
+            color: #ffbe18;
+        }
+
+        /* Open Button */
+        .open-case-action {
+            text-align: center;
+        }
+
+        .btn-open-case {
+            background: linear-gradient(90deg, #ffd700, #ff7b00);
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 22px rgba(255, 190, 24, 0.22);
+        }
+
+        .btn-open-case:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(255, 190, 24, 0.3);
+        }
+
+        .btn-open-case:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-open-case .price {
+            margin-left: 10px;
+            padding-left: 10px;
+            border-left: 2px solid rgba(0, 0, 0, 0.2);
+        }
+
+        /* Possible Items */
+        .possible-items {
+            margin-top: 50px;
+        }
+
+        .possible-items h4 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -10px;
+        }
+
+        .col-5-custom {
+            flex: 0 0 20%;
+            padding: 10px;
+        }
+
+        .item-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 220px;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .item-card.rarity-2 { border-color: #5e98d9; }
+        .item-card.rarity-4 { border-color: #8847ff; }
+        .item-card.rarity-5 { border-color: #eb4b4b; }
+
+        .item-card .item-image {
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        .item-card .item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .item-card .item-info h5 {
+            color: #fff;
+            font-size: 14px;
+            margin: 10px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-card .duration {
+            color: #adb5bd;
+            font-size: 12px;
+            display: block;
+        }
+
+        .item-card .chance {
+            color: #00ff00;
+            font-size: 12px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Featured Cases */
+        .featured-cases-area {
+            margin: 50px 0;
+        }
+
+        .featured-cases h3 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        .case-card {
+            background: linear-gradient(145deg, #1e2430, #17202b);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+
+        .case-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .case-image {
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #252d3a, #1a212c);
+            padding: 15px;
+        }
+
+        .case-image img {
+            max-width: 85%;
+            max-height: 85%;
+            object-fit: contain;
+        }
+
+        .case-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .case-info h4 {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .case-price {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .btn-outline-primary {
+            background: transparent;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+            padding: 6px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-outline-primary:hover {
+            background: #ffd700;
+            color: #000;
+        }
+
+        /* Footer */
+        .footer-style-one {
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+
+        .copyright__text {
+            color: #888;
+            text-align: center;
+        }
+
+        /* ========== MODAL SWEETALERT CUSTOM - EXATAMENTE IGUAL AO EXEMPLO ========== */
+        .swal2-popup {
+            background: #111111 !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: 8px !important;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8) !important;
+        }
+
+        .swal2-title {
+            color: #ffd700 !important;
+            font-size: 28px !important;
+            font-weight: bold !important;
+            margin-top: 10px !important;
+        }
+
+        .swal2-icon.swal2-success {
+            border-color: #ffd700 !important;
+            color: #ffd700 !important;
+        }
+
+        .swal2-success-ring {
+            border-color: rgba(255, 215, 0, 0.3) !important;
+        }
+
+        .swal2-success-line-tip,
+        .swal2-success-line-long {
+            background-color: #ffd700 !important;
+        }
+
+        .swal2-html-container {
+            color: #fff !important;
+            background: transparent !important;
+            margin: 0 !important;
+            padding: 0 20px 20px !important;
+        }
+
+        .swal2-actions {
+            margin-top: 0 !important;
+            padding: 0 20px 20px !important;
+        }
+
+        .swal2-confirm {
+            background: transparent !important;
+            color: #ffd700 !important;
+            border: 2px solid #ffd700 !important;
+            border-radius: 4px !important;
+            padding: 10px 30px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .swal2-confirm:hover {
+            background: #ffd700 !important;
+            color: #111111 !important;
+        }
+
+        .won-items-grid {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: transparent;
+        }
+
+        .won-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333333;
+        }
+
+        .won-item .item-image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .won-item .item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .won-item .item-info {
+            flex: 1;
+        }
+
+        .won-item .item-info h4 {
+            color: #fff;
+            font-size: 14px;
+            margin: 0 0 5px;
+        }
+
+        .won-item .item-info p {
+            color: #aaa;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .won-item.rarity-2 { border-color: #5e98d9; }
+        .won-item.rarity-4 { border-color: #8847ff; }
+        .won-item.rarity-5 { border-color: #eb4b4b; }
+
+        /* Total ganho no modal */
+        .won-items-grid + div {
+            margin-top: 20px !important;
+            padding-top: 20px !important;
+            border-top: 1px solid #333333 !important;
+        }
+
+        .won-items-grid + div span:first-child {
+            color: #aaa !important;
+        }
+
+        .won-items-grid + div span:last-child {
+            color: #ffd700 !important;
+            font-size: 24px !important;
+            font-weight: 700 !important;
+        }
+
+        /* Scrollbar customizada */
+        .won-items-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .won-items-grid::-webkit-scrollbar-track {
+            background: #222;
+            border-radius: 4px;
+        }
+
+        .won-items-grid::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .col-5-custom { flex: 0 0 25%; }
+            .cases-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 992px) {
+            .col-5-custom { flex: 0 0 33.333%; }
+            .cases-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .col-5-custom { flex: 0 0 50%; }
+            .cases-grid { grid-template-columns: repeat(2, 1fr); }
+            .case-opening-image--scaled { transform: scale(1); }
+            .section-header .btn-back-cases,
+            .section-header .user-balance {
+                position: relative;
+                margin: 10px 0;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .col-5-custom { flex: 0 0 100%; }
+            .cases-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="tg-header__area">
+        <div class="container-custom">
+            <div class="tgmenu__wrap">
+                <div class="tgmenu__nav">
+                    <div class="logo">
+                        <img src="https://zetacf.net/assets/images/cf_logo.png" alt="Logo">
+                    </div>
+                    
+                    <div class="tgmenu__navbar-wrap">
+                        <ul class="navigation">
+                            <li><a href="#">Início</a></li>
+                            <li><a href="#">Loja</a></li>
+                            <li><a href="#" class="menu-highlight"><i class="fas fa-cloud-rain"></i> Chuva de ZP</a></li>
+                            <li><a href="#" class="menu-highlight"><i class="fas fa-exchange-alt"></i> TROCA DE ARMAS</a></li>
+                            <li><a href="#" class="menu-highlight"><i class="fas fa-box-open"></i> Open Case</a></li>
+                            <li><a href="#" class="menu-highlight"><i class="fas fa-passport"></i> Passe</a></li>
+                        </ul>
+                    </div>
+
+                    <a href="#" class="btn-download"><span>Download</span></a>
+
+                    <div class="tgmenu__navbar-wrap menu2">
+                        <ul class="navigation">
+                            <li class="menu-item-has-children">
+                                <a href="#" class="user-mini">
+                                    <img src="https://zetacf.net/assets/images/ranks/BIGCLASS_31.png" alt="Patente" class="rank-badge-mini">
+                                    <span class="user-lines">
+                                        <span><span class="nick-label">Nick:</span><span class="nickname">-]T[orres.</span></span>
+                                        <span class="login">tardis</span>
+                                    </span>
+                                    <span class="user-caret"><i class="fas fa-caret-down"></i></span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="top-spacer"></div>
+
+    <!-- Main Content -->
+    <main>
+        <section class="case-opening-area">
+            <div class="container-custom">
+                <div class="case-opening-section">
+                    <!-- Header -->
+                    <div class="section-header">
+                        <a href="#" class="btn-back-cases">
+                            <i class="fas fa-arrow-left"></i> VOLTAR
+                        </a>
+                        
+                        <div class="section__title">
+                            <div class="case-opening-main-image">
+                                <img src="https://zetacf.net/assets/images/Cases/super_champion.png" alt="Super Champion" class="case-opening-image--scaled">
+                            </div>
+                            <h3 class="title">Super Champion</h3>
+                            <span class="sub-title">Exclusivo CrossFire Zeta!</span>
+                        </div>
+
+                        <div class="user-balance" id="userBalance">
+                            <i class="fas fa-coins"></i>
+                            <span>Saldo: <span id="zpAmount">100,000</span> ZP</span>
+                        </div>
+                    </div>
+
+                    <!-- Timer -->
+                    <div class="timer-display" id="timerDisplay">
+                        <span class="label">Reset ZP em:</span>
+                        <span class="time" id="timer">05:00</span>
+                    </div>
+
+                    <!-- Roulettes Container -->
+                    <div class="roulettes-container" data-amount="1" id="roulettesContainer"></div>
+
+                    <!-- Open Options -->
+                    <div class="open-case-options">
+                        <div class="btn-group">
+                            <button class="btn-open-option active" data-amount="1">1x</button>
+                            <button class="btn-open-option" data-amount="3">3x</button>
+                            <button class="btn-open-option" data-amount="5">5x</button>
+                        </div>
+                        
+                        <div class="auto-toggle-container">
+                            <label class="auto-toggle">
+                                <input type="checkbox" id="autoToggle">
+                                <span class="auto-toggle-slider"></span>
+                                <span class="auto-toggle-text">Auto</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Open Button -->
+                    <div class="open-case-action">
+                        <button class="btn-open-case" id="openCaseBtn">
+                            <i class="fas fa-unlock-alt"></i> ABRIR
+                            <span class="price">
+                                <i class="fas fa-coins"></i> 
+                                <span id="totalPrice">2,000</span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- Possible Items -->
+                    <div class="possible-items">
+                        <h4>ITENS DISPONÍVEIS NESTA CASE:</h4>
+                        <div class="row" id="possibleItemsGrid"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Cases -->
+        <section class="featured-cases-area">
+            <div class="container-custom">
+                <div class="featured-cases">
+                    <h3>CASES EM DESTAQUE</h3>
+                    <div class="cases-grid" id="featuredCases"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-style-one">
+        <div class="container-custom">
+            <div class="copyright__text">
+                <p>Copyright © 2025 - Super Champion Case Opening</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Audio Elements -->
+    <audio id="tickSound" preload="auto" style="display: none;">
+        <source src="https://zetacf.net/assets/audio/UI_Gacha_SlowSpin.wav" type="audio/wav">
+    </audio>
+    <audio id="winSound" preload="auto" style="display: none;">
+        <source src="https://zetacf.net/assets/audio/UI_Gacha_Select.wav" type="audio/wav">
+    </audio>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // ==================== CONFIGURAÇÕES ====================
+        const CASE_PRICE = 2000;
+        const INITIAL_ZP = 100000;
+        const RESET_INTERVAL = 5 * 60 * 1000; // 5 minutos em ms
+
+        // Itens da case Super Champion (exatamente como no original)
+        const CASE_ITEMS = [
+            { id: 2473, name: "Ticket de Caixa Grátis", code: "9000097701", duration: "1", rarity: 4, image: "2748", chance: 4.00 },
+            { id: 2474, name: "Kukri-Beast", code: "2010081202", duration: "1", rarity: 2, image: "1834", chance: 20.00 },
+            { id: 2475, name: "M4A1-Bronze", code: "2010011502", duration: "7", rarity: 2, image: "211", chance: 30.00 },
+            { id: 2476, name: "Fox Howl Grenade", code: "9000079601", duration: "1", rarity: 2, image: "2366", chance: 9.00 },
+            { id: 2477, name: "Nano Grenade", code: "2010210501", duration: "7", rarity: 2, image: "2377", chance: 15.00 },
+            { id: 2478, name: "Desert Eagle-Bronze", code: "2010011601", duration: "1", rarity: 2, image: "212", chance: 20.00 },
+            { id: 2479, name: "G36C-Spec. Super Conductor", code: "2010000282", duration: "0", rarity: 5, image: "3699", chance: 0.40 },
+            { id: 2480, name: "SCAR-L B.H. Super Conductor", code: "2010000283", duration: "0", rarity: 5, image: "3701", chance: 0.40 },
+            { id: 2481, name: "B.K.-I.D. Super Conductor", code: "2010000284", duration: "0", rarity: 5, image: "3703", chance: 0.40 },
+            { id: 2482, name: "G36C-Specular G.Champion", code: "2010000239", duration: "0", rarity: 5, image: "3732", chance: 0.40 },
+            { id: 2483, name: "Kukri-Beast Gaming Champion", code: "2010000240", duration: "0", rarity: 5, image: "3738", chance: 0.40 }
+        ];
+
+        // Itens para featured cases
+        const FEATURED_CASES = [
+            { id: 2059, name: "Galaxy", image: "galaxy", price: 2000 },
+            { id: 2058, name: "Super Champion", image: "super_champion", price: 2000 },
+            { id: 2056, name: "Classic", image: "classic", price: 2000 },
+            { id: 2055, name: "Classic Beast", image: "classic_beast", price: 2000 },
+            { id: 2054, name: "Mix M4A1", image: "mix_m4a1_1", price: 2000 }
+        ];
+
+        // ==================== ESTADO GLOBAL ====================
+        let userZP = INITIAL_ZP;
+        let selectedAmount = 1;
+        let isOpening = false;
+        let isAutoEnabled = false;
+        let autoOpenTimeout = null;
+        let timerInterval = null;
+        let currentItemUnderPointer = null;
+
+        // ==================== FUNÇÕES UTILITÁRIAS ====================
+        function formatNumber(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function getDurationText(item) {
+            if (item.code === "9000097701") {
+                return `${item.duration} Unidade${item.duration > 1 ? 's' : ''}`;
+            }
+            return item.duration === "0" ? "Permanente" : `${item.duration} Dias`;
+        }
+
+        function playTickSound() {
+            const tickSound = document.getElementById('tickSound');
+            if (tickSound) {
+                tickSound.currentTime = 0;
+                tickSound.play().catch(e => console.log('Audio tick error:', e));
+            }
+        }
+
+        function playWinSound() {
+            const winSound = document.getElementById('winSound');
+            if (winSound) {
+                winSound.currentTime = 0;
+                winSound.play().catch(e => console.log('Audio win error:', e));
+            }
+        }
+
+        // ==================== FUNÇÕES DE INTERFACE ====================
+        function updateBalance() {
+            document.getElementById('zpAmount').textContent = formatNumber(userZP);
+            document.getElementById('totalPrice').textContent = formatNumber(CASE_PRICE * selectedAmount);
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            let timeLeft = RESET_INTERVAL;
+            const timerElement = document.getElementById('timer');
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 1000;
+                
+                if (timeLeft <= 0) {
+                    userZP = INITIAL_ZP;
+                    updateBalance();
+                    timeLeft = RESET_INTERVAL;
+                    
+                    Swal.fire({
+                        title: 'ZP Resetado!',
+                        text: 'Seu saldo foi restaurado para 100,000 ZP!',
+                        icon: 'info',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: '#111111',
+                        color: '#fff',
+                        iconColor: '#ffd700'
+                    });
+                }
+                
+                const minutes = Math.floor(timeLeft / 60000);
+                const seconds = Math.floor((timeLeft % 60000) / 1000);
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // ==================== FUNÇÕES DA ROLETA ====================
+        function createRouletteItem(item, isWinner = false) {
+            const durationText = getDurationText(item);
+            const imageUrl = `https://zetacf.net/assets/images/BIGITEMICON/BIGITEMICON_${item.image}.png`;
+            
+            return `
+                <div class="roulette-item rarity-${item.rarity}">
+                    <div class="item-image">
+                        <img src="${imageUrl}" alt="${item.name}">
+                    </div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-duration">${durationText}</div>
+                </div>
+            `;
+        }
+
+        function createRouletteHtml(index) {
+            return `
+                <div class="roulette-wrapper">
+                    <div class="roulette-container">
+                        <div class="roulette-items" id="roulette-${index}"></div>
+                        <div class="roulette-pointer"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createRoulettes(amount) {
+            const container = document.getElementById('roulettesContainer');
+            container.setAttribute('data-amount', amount);
+            container.innerHTML = '';
+
+            if (amount === 5) {
+                const column1 = document.createElement('div');
+                column1.className = 'column';
+                const column2 = document.createElement('div');
+                column2.className = 'column';
+
+                for (let i = 0; i < 3; i++) {
+                    column1.innerHTML += createRouletteHtml(i);
+                }
+                for (let i = 3; i < 5; i++) {
+                    column2.innerHTML += createRouletteHtml(i);
+                }
+
+                container.appendChild(column1);
+                container.appendChild(column2);
+            } else {
+                for (let i = 0; i < amount; i++) {
+                    container.innerHTML += createRouletteHtml(i);
+                }
+            }
+
+            // Preencher cada roleta com itens iniciais
+            for (let i = 0; i < amount; i++) {
+                const roulette = document.getElementById(`roulette-${i}`);
+                if (roulette) {
+                    fillRouletteWithRandomItems(roulette);
+                }
+            }
+        }
+
+        function fillRouletteWithRandomItems(rouletteElement) {
+            let items = '';
+            const normalItems = CASE_ITEMS.filter(item => item.rarity < 5);
+            
+            for (let i = 0; i < 20; i++) {
+                const randomItem = normalItems[Math.floor(Math.random() * normalItems.length)];
+                items += createRouletteItem(randomItem);
+            }
+            
+            rouletteElement.innerHTML = items;
+        }
+
+        // ==================== FUNÇÃO DE ABRIR CASE ====================
+        function openCase() {
+            if (isOpening) return;
+            
+            const totalCost = CASE_PRICE * selectedAmount;
+            
+            if (userZP < totalCost) {
+                Swal.fire({
+                    title: 'Saldo Insuficiente!',
+                    text: `Você precisa de ${formatNumber(totalCost)} ZP para abrir ${selectedAmount}x.`,
+                    icon: 'error',
+                    confirmButtonColor: '#ffbe18',
+                    background: '#111111',
+                    color: '#fff',
+                    iconColor: '#ff4444'
+                });
+                return;
+            }
+
+            // Deduzir ZP
+            userZP -= totalCost;
+            updateBalance();
+
+            // Sortear itens
+            const wonItems = [];
+            for (let i = 0; i < selectedAmount; i++) {
+                const random = Math.random() * 100;
+                let cumulative = 0;
+                
+                for (const item of CASE_ITEMS) {
+                    cumulative += item.chance;
+                    if (random <= cumulative) {
+                        wonItems.push(item);
+                        break;
+                    }
+                }
+            }
+
+            // Iniciar animação
+            isOpening = true;
+            document.getElementById('openCaseBtn').disabled = true;
+            
+            // Resetar roletas e iniciar animação
+            for (let i = 0; i < selectedAmount; i++) {
+                const roulette = document.getElementById(`roulette-${i}`);
+                if (roulette) {
+                    animateRoulette(roulette, wonItems[i], i);
+                }
+            }
+
+            // Parar animação após 8 segundos
+            setTimeout(() => {
+                isOpening = false;
+                document.getElementById('openCaseBtn').disabled = false;
+                
+                playWinSound();
+                showWonItems(wonItems);
+                
+                // Se auto estiver habilitado, abrir novamente
+                if (isAutoEnabled && userZP >= CASE_PRICE * selectedAmount) {
+                    autoOpenTimeout = setTimeout(openCase, 1000);
+                } else if (isAutoEnabled) {
+                    isAutoEnabled = false;
+                    document.getElementById('autoToggle').checked = false;
+                    Swal.fire({
+                        title: 'Auto parado!',
+                        text: 'Saldo insuficiente para continuar.',
+                        icon: 'warning',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: '#111111',
+                        color: '#fff',
+                        iconColor: '#ffd700'
+                    });
+                }
+            }, 8000);
+        }
+
+        function animateRoulette(roulette, wonItem, index) {
+            const items = [];
+            const normalItems = CASE_ITEMS.filter(item => item.rarity < 5);
+            
+            // Gerar itens aleatórios antes do vencedor
+            for (let i = 0; i < 30; i++) {
+                const randomItem = normalItems[Math.floor(Math.random() * normalItems.length)];
+                items.push(randomItem);
+            }
+            
+            // Adicionar item vencedor
+            items.push(wonItem);
+            
+            // Adicionar alguns itens depois
+            for (let i = 0; i < 5; i++) {
+                const randomItem = normalItems[Math.floor(Math.random() * normalItems.length)];
+                items.push(randomItem);
+            }
+
+            // Criar HTML dos itens
+            let html = '';
+            items.forEach((item, idx) => {
+                html += createRouletteItem(item, idx === 30);
+            });
+            
+            roulette.innerHTML = html;
+            roulette.style.transition = 'none';
+            roulette.style.transform = 'translateX(0)';
+
+            // Forçar reflow
+            roulette.offsetHeight;
+
+            // Calcular posição final
+            const container = roulette.closest('.roulette-container');
+            const containerWidth = container.offsetWidth;
+            const itemWidth = 200; // 180px width + 20px margin
+            
+            const finalPosition = (30 * itemWidth) - ((containerWidth - itemWidth) / 2);
+
+            // Iniciar animação
+            setTimeout(() => {
+                roulette.style.transition = 'transform 8s cubic-bezier(0.15, 0.15, 0, 1)';
+                roulette.style.transform = `translateX(-${finalPosition}px)`;
+            }, index * 100);
+        }
+
+        function showWonItems(items) {
+            // Calcular total de ZP ganho (para este caso, vamos somar algo fictício)
+            // Como é uma case de itens, vamos apenas mostrar os itens
+            let html = '<div class="won-items-grid">';
+            
+            items.forEach(item => {
+                html += `
+                    <div class="won-item rarity-${item.rarity}">
+                        <div class="item-image">
+                            <img src="https://zetacf.net/assets/images/BIGITEMICON/BIGITEMICON_${item.image}.png" alt="${item.name}">
+                        </div>
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${getDurationText(item)}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+
+            // Adicionar total se quiser (opcional)
+            html += `
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #333;">
+                    <span style="color: #aaa;">Total de itens: </span>
+                    <span style="color: #ffd700; font-size: 24px; font-weight: 700;">${items.length}</span>
+                </div>
+            `;
+
+            Swal.fire({
+                title: '🎉 PARABÉNS! 🎉',
+                html: html,
+                icon: 'success',
+                width: items.length > 3 ? '800px' : '600px',
+                confirmButtonText: 'Continuar',
+                background: '#111111',
+                color: '#fff',
+                iconColor: '#ffd700',
+                showClass: {
+                    popup: 'animate__animated animate__fadeIn'
+                }
+            });
+        }
+
+        // ==================== RENDERIZAR ITENS DISPONÍVEIS ====================
+        function renderPossibleItems() {
+            const grid = document.getElementById('possibleItemsGrid');
+            grid.innerHTML = '';
+            
+            CASE_ITEMS.forEach(item => {
+                const durationText = getDurationText(item);
+                const col = document.createElement('div');
+                col.className = 'col-5-custom';
+                col.innerHTML = `
+                    <div class="item-card rarity-${item.rarity}">
+                        <div class="item-image">
+                            <img src="https://zetacf.net/assets/images/BIGITEMICON/BIGITEMICON_${item.image}.png" alt="${item.name}">
+                        </div>
+                        <div class="item-info">
+                            <h5>${item.name}</h5>
+                            <span class="duration">${durationText}</span>
+                            <span class="chance">Chance: ${item.chance}%</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(col);
+            });
+        }
+
+        // ==================== RENDERIZAR FEATURED CASES ====================
+        function renderFeaturedCases() {
+            const grid = document.getElementById('featuredCases');
+            grid.innerHTML = '';
+            
+            FEATURED_CASES.forEach(case_ => {
+                const card = document.createElement('div');
+                card.className = 'case-card';
+                card.innerHTML = `
+                    <div class="case-image">
+                        <img src="https://zetacf.net/assets/images/Cases/${case_.image}.png" alt="${case_.name}">
+                    </div>
+                    <div class="case-info">
+                        <h4>${case_.name}</h4>
+                        <div class="case-price">${formatNumber(case_.price)} ZP</div>
+                        <a href="#" class="btn-outline-primary">ABRIR CASE</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Renderizar inicial
+            renderPossibleItems();
+            renderFeaturedCases();
+            createRoulettes(1);
+            startTimer();
+            updateBalance();
+
+            // Botões de quantidade
+            document.querySelectorAll('.btn-open-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (isOpening) return;
+                    
+                    document.querySelectorAll('.btn-open-option').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedAmount = parseInt(this.dataset.amount);
+                    createRoulettes(selectedAmount);
+                    updateBalance();
+                });
+            });
+
+            // Botão de abrir
+            document.getElementById('openCaseBtn').addEventListener('click', openCase);
+
+            // Auto toggle
+            document.getElementById('autoToggle').addEventListener('change', function() {
+                isAutoEnabled = this.checked;
+                if (isAutoEnabled) {
+                    if (autoOpenTimeout) clearTimeout(autoOpenTimeout);
+                    openCase();
+                } else {
+                    if (autoOpenTimeout) {
+                        clearTimeout(autoOpenTimeout);
+                        autoOpenTimeout = null;
+                    }
+                }
+            });
+
+            // Monitorar passagem dos itens para som de tick
+            function monitorItems() {
+                if (!isOpening) return;
+                
+                const pointer = document.querySelector('.roulette-pointer');
+                if (!pointer) return;
+                
+                const pointerRect = pointer.getBoundingClientRect();
+                const pointerX = pointerRect.left;
+
+                document.querySelectorAll('.roulette-item').forEach(item => {
+                    const itemRect = item.getBoundingClientRect();
+                    
+                    if (itemRect.left <= pointerX && itemRect.right >= pointerX) {
+                        if (item !== currentItemUnderPointer) {
+                            currentItemUnderPointer = item;
+                            playTickSound();
+                        }
+                    }
+                });
+
+                requestAnimationFrame(monitorItems);
+            }
+
+            requestAnimationFrame(monitorItems);
+        });
+    </script>
+</body>
+</html>
