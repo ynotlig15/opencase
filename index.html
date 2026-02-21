@@ -1614,10 +1614,47 @@
             { id: 2483, name: "Kukri-Beast Gaming Champion", code: "2010000240", duration: "0", rarity: 5, image: "3738" }
         ];
 
-        // Armas que o jogador possui (começa com 0 armas)
+        // ==================== FUNÇÕES DE SALVAMENTO ====================
+        function saveGameData() {
+            const gameData = {
+                userZP: userZP,
+                playerOwnedWeapons: playerOwnedWeapons,
+                playerStats: playerStats,
+                lastSave: new Date().getTime()
+            };
+            localStorage.setItem('superChampionData', JSON.stringify(gameData));
+            console.log('Jogo salvo!', gameData);
+        }
+
+        function loadGameData() {
+            const savedData = localStorage.getItem('superChampionData');
+            if (savedData) {
+                try {
+                    const gameData = JSON.parse(savedData);
+                    userZP = gameData.userZP || INITIAL_ZP;
+                    playerOwnedWeapons = gameData.playerOwnedWeapons || [];
+                    playerStats = gameData.playerStats || { tradesPerformed: 0, successfulTrades: 0 };
+                    console.log('Jogo carregado!', gameData);
+                } catch (e) {
+                    console.error('Erro ao carregar dados:', e);
+                    resetToDefault();
+                }
+            } else {
+                console.log('Nenhum dado salvo encontrado, usando valores padrão');
+                resetToDefault();
+            }
+        }
+
+        function resetToDefault() {
+            userZP = INITIAL_ZP;
+            playerOwnedWeapons = [];
+            playerStats = { tradesPerformed: 0, successfulTrades: 0 };
+        }
+
+        // Armas que o jogador possui (carregadas do localStorage)
         let playerOwnedWeapons = [];
 
-        // Estatísticas do jogador
+        // Estatísticas do jogador (carregadas do localStorage)
         let playerStats = {
             tradesPerformed: 0,
             successfulTrades: 0
@@ -1655,7 +1692,10 @@
         // Estado da troca
         let selectedWeapons = [];
 
-        // ==================== FUNÇÕES DE NAVEGAÇÃO (CORRIGIDAS) ====================
+        // CARREGAR DADOS AO INICIAR
+        loadGameData();
+
+        // ==================== FUNÇÕES DE NAVEGAÇÃO ====================
         function showPage(page) {
             const openCasePage = document.getElementById('pageOpenCase');
             const profilePage = document.getElementById('pageProfile');
@@ -1676,7 +1716,6 @@
                     setTimeout(() => {
                         openCasePage.style.opacity = '1';
                     }, 50);
-                    // CORREÇÃO BUG 2: Voltar para o topo ao abrir Open Case
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'
@@ -1688,7 +1727,6 @@
                         profilePage.style.opacity = '1';
                     }, 50);
                     renderCollection();
-                    // CORREÇÃO: Ir para o topo ao abrir Perfil
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'
@@ -1700,7 +1738,6 @@
                         tradePage.style.opacity = '1';
                     }, 50);
                     renderTradeWeapons();
-                    // CORREÇÃO BUG 1: Ir para o topo ao abrir Troca (não descer)
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'
@@ -1751,6 +1788,7 @@
             document.getElementById('zpAmountTrade').textContent = formatNumber(userZP);
             document.getElementById('profileZp').textContent = formatNumber(userZP);
             document.getElementById('totalPrice').textContent = formatNumber(CASE_PRICE * selectedAmount);
+            saveGameData(); // Salvar após atualizar saldo
         }
 
         function startTimer() {
@@ -1766,6 +1804,7 @@
                     userZP = INITIAL_ZP;
                     updateBalance();
                     timeLeft = RESET_INTERVAL;
+                    saveGameData(); // Salvar após reset
                     
                     Swal.fire({
                         title: 'ZP Resetado!',
@@ -1893,6 +1932,7 @@
                         // Se for arma permanente (raridade 5), adicionar à coleção do jogador
                         if (item.rarity === 5) {
                             playerOwnedWeapons.push(item);
+                            saveGameData(); // Salvar após ganhar arma
                         }
                         break;
                     }
@@ -2152,6 +2192,8 @@
                 playerStats.successfulTrades++;
                 playWinSound();
                 
+                saveGameData(); // Salvar após troca bem-sucedida
+                
                 Swal.fire({
                     title: '🎉 TROCA BEM-SUCEDIDA! 🎉',
                     html: `
@@ -2183,6 +2225,7 @@
                 });
                 
                 playFailSound();
+                saveGameData(); // Salvar após troca falha
                 
                 Swal.fire({
                     title: '💥 TROCA FALHOU! 💥',
@@ -2261,7 +2304,7 @@
             renderFeaturedCases();
             createRoulettes(1);
             startTimer();
-            updateBalance();
+            updateBalance(); // Isso já chama saveGameData()
             renderCollection();
 
             // Botões de quantidade
@@ -2319,6 +2362,11 @@
             }
 
             requestAnimationFrame(monitorItems);
+        });
+
+        // Salvar dados antes de fechar a página (por segurança)
+        window.addEventListener('beforeunload', function() {
+            saveGameData();
         });
     </script>
 </body>
